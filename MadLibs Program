@@ -1,0 +1,129 @@
+import java.io.*;
+import java.util.*;
+ 
+public class MadLibs {
+   public static void main(String[] args) throws FileNotFoundException {
+      Scanner console = new Scanner(System.in);
+      String prompt = " ";
+      String outputName = " ";
+      String inputFile = " ";
+ 
+      Introduction();
+ 
+      while(!(prompt.equalsIgnoreCase("q"))) {
+         if(prompt.equalsIgnoreCase("c")) {
+            inputFile = getInputFileName(console, inputFile);
+            System.out.print("Output file name: ");
+            outputName = console.nextLine();
+            System.out.println();
+ 
+            prompt = readFile(inputFile, outputName, console);
+ 
+         } else if(prompt.equalsIgnoreCase("v")) {
+            inputFile = getInputFileName(console, inputFile);
+ 
+            prompt = printFile(inputFile, console);
+         } else {
+            System.out.print("(C)reate mad-lib, (V)iew mad-lib, (Q)uit? ");
+            prompt = console.nextLine();
+         }
+      }
+   }
+ 
+   //Prints the introductory paragraph for the program, describing the program.
+   public static void Introduction() {
+      System.out.println("Welcome to the game of Mad Libs.");
+      System.out.println("I will ask you to provide various words");
+      System.out.println("and phrases to fill in a story.");
+      System.out.println("The result will be written to an output file.");
+      System.out.println();
+   }
+ 
+   //Asks the user for an input file and checks to see if it exists
+   //Parameters needed:
+   //    console = allows the user to type a response to the console
+   //  inputFile = passes in the file to be read
+   public static String getInputFileName(Scanner console, String inputFile)
+                throws FileNotFoundException{
+      System.out.print("Input file name: ");
+      inputFile = console.nextLine();
+      File f = new File(inputFile);
+ 
+      while(!f.exists()) {
+         System.out.print("File not found. Try again: ");
+         inputFile = console.nextLine();
+         f = new File(inputFile);
+      }
+      return inputFile;
+   }
+ 
+   //Prints out the contents of a file
+   //Parameters needed:
+   //    console = allows the user to type a response to the console
+   //  inputFile = passes in the file to be read 
+   public static String printFile(String inputFile, Scanner console) throws FileNotFoundException {
+      System.out.println();
+      Scanner input = new Scanner(new File(inputFile));
+      while(input.hasNextLine()) {
+         String line = input.nextLine();
+         Scanner lineScan = new Scanner(line);
+         while(lineScan.hasNext()) {
+            String word = lineScan.next();
+            System.out.print(word + " ");
+         }
+         System.out.println();
+      }
+      System.out.println();
+      System.out.print("(C)reate mad-lib, (V)iew mad-lib, (Q)uit? ");
+      String prompt = console.nextLine();
+      return prompt;
+   }
+ 
+   //Reads the input file and replaces the placeholders with the responses from the user
+   //Parameters needed:
+   //  inputFile = passes in the file to be read
+   // outputName = passes in the name of the file to print the user responses to
+   //    console = allows the user to respond to the console
+   public static String readFile(String inputFile, String outputName, Scanner console)
+                throws FileNotFoundException {
+      String word = " ";
+      String response = " ";
+      PrintStream outputFile = new PrintStream(new File(outputName));
+      Scanner input = new Scanner(new File(inputFile));
+      while(input.hasNextLine()) {
+         String line = input.nextLine();
+         Scanner lineScan = new Scanner(line);
+         while(lineScan.hasNext()) {
+            word = lineScan.next();
+            if(word.startsWith("<") && word.endsWith(">")) {
+               if(word.contains("-")) {
+                  word = word.replace("-", " ");
+               }
+               word = word.substring(1, (word.length() - 1));
+               String newWord = word;
+               word = word.substring(0,1);
+               if((word.equalsIgnoreCase("a")) || word.equalsIgnoreCase("e") || 
+                  word.equalsIgnoreCase("i") || word.equalsIgnoreCase("o") || 
+                  word.equalsIgnoreCase("u")) {
+                  System.out.print("Please type an " + newWord + ": ");
+               } else {
+                  System.out.print("Please type a " + newWord + ": ");
+               }
+               response = console.nextLine();
+               word = word.replace(word, response);
+               outputFile.print(word);
+               outputFile.print(" ");              
+            } else {
+               outputFile.print(word);
+               outputFile.print(" ");
+            }
+         }
+         outputFile.println();
+      }
+      System.out.println("Your mad-lib has been created!");
+      System.out.println();
+      System.out.print("(C)reate mad-lib, (V)iew mad-lib, (Q)uit? ");
+      String prompt = console.nextLine();
+      return prompt;
+   }
+}
