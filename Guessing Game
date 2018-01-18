@@ -1,0 +1,95 @@
+import java.util.*;
+
+public class GuessingGame {
+   public static final int MAX = 5;
+   public static void main(String[] args){
+      
+      Scanner console = new Scanner(System.in);
+      
+      haiku();
+      
+      Random rand = new Random();
+      int answer;
+      int guess = 0;
+      int guesses = 0;
+      String response = " ";
+      int totalGames = 0;
+      int totalGuesses = 0;
+      int bestGame = MAX;
+      
+      do {
+         answer = rand.nextInt(MAX) + 1 ;
+         
+         int bestScoreNumb = playGame(console, answer, guess, guesses, totalGuesses);
+         
+         bestGame = Math.min(bestScoreNumb, bestGame);
+         
+         totalGuesses = totalGuesses + bestScoreNumb;
+         
+         totalGames++;
+         
+         System.out.print("Do you want to play again? ");
+         response = console.next();
+         
+      } while (response.startsWith("y") || response.startsWith("Y"));
+      
+      overallResults(totalGames, totalGuesses, bestGame);
+   }
+   
+   //Prints my haiku poem
+   public static void haiku() {
+      System.out.println("I love learning code!");
+      System.out.println("Although it is challenging...");
+      System.out.println("I think it is fun.");
+   }
+   
+   //Allows the user to play a game and guess the random number
+   //Parameters needed:
+   // console = prompts the user for input
+   //      answer  = the random number the user needs to guess
+   //      guess   = the number the user guesses
+   //      guesses = the number of times the user makes a guess
+   public static int playGame(Scanner console, int answer, int guess, int guesses, int totalGuesses) {
+                               
+      System.out.println();
+      System.out.println("Im thinking of a number between 1 and " + MAX + "...");
+      
+      do {
+         System.out.print("Your guess? ");
+         guess = console.nextInt();
+         if (guess > answer) {
+            System.out.println("It's lower.");
+         } else if (guess == answer){
+            guesses++;
+            break;
+         } else {
+            System.out.println("It's higher.");
+         }
+         
+         guesses++;
+         
+      }  while (guess != answer);
+      
+      System.out.println("You got it right in " + guesses + " guesses!");
+      
+      return guesses;
+   }
+   
+   //Prints the totals of the games played, the guesses made, the number of guesses per game,
+   //as well as the least amount of guesses needed to win a game
+   //Parameters needed:
+   //     totalGames = total number of games played
+   //   totalGuesses = total number of guess made across all of the games
+   //       bestGame = least amount of guesses required to guess a the random number
+   public static void overallResults(int totalGames, int totalGuesses, int bestGame) {
+      double guessesPerGame = (double)totalGuesses/(double)totalGames;
+      System.out.println();
+      System.out.println("Overall results:");
+      System.out.println("Total games   = " + totalGames);
+      System.out.println("Total guesses = " + totalGuesses);
+      System.out.printf("Guesses/game  = " + "%.1f" , guessesPerGame);
+      System.out.println();
+      System.out.println("Best game     = " + bestGame);
+      
+   }
+}
